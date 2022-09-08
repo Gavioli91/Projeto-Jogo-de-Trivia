@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { fetchToken } from '../redux/actions';
 
-class Login extends React.Component {
+class Login extends Component {
   state = {
     playerName: '',
     email: '',
@@ -15,6 +18,12 @@ class Login extends React.Component {
       const rule = !(email.length >= minLength && playerName.length >= minLength);
       this.setState({ isButtonDisabled: rule });
     });
+  };
+
+  handleClick = () => {
+    const { dispatch, history } = this.props;
+    dispatch(fetchToken());
+    history.push('/game');
   };
 
   render() {
@@ -56,6 +65,7 @@ class Login extends React.Component {
             type="button"
             data-testid="btn-play"
             disabled={ isButtonDisabled }
+            onClick={ this.handleClick }
           >
             Play
           </button>
@@ -65,4 +75,9 @@ class Login extends React.Component {
   }
 }
 
-export default Login;
+Login.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  history: PropTypes.instanceOf(Object).isRequired,
+};
+
+export default connect()(Login);
