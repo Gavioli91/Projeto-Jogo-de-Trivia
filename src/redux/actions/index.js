@@ -5,10 +5,10 @@ export const LOADING = 'LOADING';
 export const TOKEN_SUCESS = 'TOKEN_SUCESS';
 export const TOKEN_FAIL = 'TOKEN_FAIL';
 
-export function logUser(payload) {
+export function logUser(infoUser) {
   return {
     type: USER_LOGGED,
-    payload,
+    infoUser,
   };
 }
 

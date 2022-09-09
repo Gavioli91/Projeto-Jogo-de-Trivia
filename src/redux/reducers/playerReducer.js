@@ -3,7 +3,7 @@ import { USER_LOGGED } from '../actions';
 const INITIAL_STATE = {
   name: '',
   assertions: '',
-  score: '',
+  score: 0,
   gravatarEmail: '',
 };
 
@@ -12,7 +12,8 @@ function playerReducer(state = INITIAL_STATE, action) {
   case USER_LOGGED:
     return {
       ...state,
-      ...action.payload,
+      name: action.infoUser.playerName,
+      gravatarEmail: action.infoUser.email,
     };
   default:
     return state;
