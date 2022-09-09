@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { fetchToken } from '../redux/actions';
+import { fetchToken, logUser } from '../redux/actions';
 
 class Login extends Component {
   state = {
@@ -22,7 +22,9 @@ class Login extends Component {
 
   handleClick = () => {
     const { dispatch, history } = this.props;
+    const { playerName, email } = this.state;
     dispatch(fetchToken());
+    dispatch(logUser({ playerName, email }));
     history.push('/game');
   };
 
