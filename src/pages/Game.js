@@ -68,3 +68,4 @@ const mapStateToProps = (state) => ({
 });
 
 export default connect(mapStateToProps)(Game);
+// teste
