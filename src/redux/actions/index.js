@@ -4,6 +4,7 @@ export const USER_LOGGED = 'USER_LOGGED';
 export const LOADING = 'LOADING';
 export const TOKEN_SUCESS = 'TOKEN_SUCESS';
 export const TOKEN_FAIL = 'TOKEN_FAIL';
+export const QUESTIONS_SUCCESS = 'QUESTIONS_SUCCESS';
 
 export function logUser(infoUser) {
   return {
@@ -26,13 +27,23 @@ const getTokenFail = (error) => ({
   error,
 });
 
-export const fetchToken = () => async (dispatch) => {
+const getQuestionSuccess = (questions) => ({
+  type: QUESTIONS_SUCCESS,
+  questions,
+});
+
+export const fetchTokenAndQuestions = () => async (dispatch) => {
   dispatch(loading());
   try {
     const response = await getTokenApi();
     const { token } = response;
+    console.log(`token: ${token}`);
     dispatch(getTokenSucess(token));
     localStorage.setItem('token', token);
+    const fetchQuestions = await fetch(`https://opentdb.com/api.php?amount=5&token=${token}`);
+    const json = await fetchQuestions.json();
+    console.log(json);
+    dispatch(getQuestionSuccess(json));
   } catch (error) {
     dispatch(getTokenFail(error));
   }
