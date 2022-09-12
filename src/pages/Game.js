@@ -19,7 +19,7 @@ class Game extends Component {
 
   render() {
     const { results } = this.props;
-    const question = results[0].map((result, i) => result.length === RESULTS_LENGTH
+    const question = results.map((result, i) => result.length === RESULTS_LENGTH
     && (
       <div key={ i }>
         <h3 data-testid="question-category">{ result.category }</h3>
