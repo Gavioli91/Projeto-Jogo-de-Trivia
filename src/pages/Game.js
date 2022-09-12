@@ -19,36 +19,37 @@ class Game extends Component {
 
   render() {
     const { results } = this.props;
-    const question = results.map((result, i) => result.length === RESULTS_LENGTH
+    const num = 0.5;
+    const question = results.map((result, i) => {
+      const arrayAnswers = [...result.incorrect_answers, result.correct_answer];
+      console.log(arrayAnswers);
+      const randomAnswers = arrayAnswers.sort(() => Math.random() - num);
+      console.log(randomAnswers);
+      return results.length === RESULTS_LENGTH
     && (
       <div key={ i }>
         <h3 data-testid="question-category">{ result.category }</h3>
         <h4 data-testid="question-text">{ result.question }</h4>
         <div data-testid="answer-options">
-          <button type="button" data-testid="correct-answer">
-            { result.correctAnswer }
-          </button>
-          <button type="button" data-testid={ `wrong-answer-${i}` }>
-            { result.incorrect_answers }
-          </button>
-          <button type="button" data-testid={ `wrong-answer-${i}` }>
-            { result.incorrect_answers }
-          </button>
-          <button type="button" data-testid={ `wrong-answer-${i}` }>
-            { result.incorrect_answers }
-          </button>
-          <button type="button" data-testid={ `wrong-answer-${i}` }>
-            { result.incorrect_answers }
-          </button>
+          {randomAnswers.map((answer, index) => (
+            <button
+              type="button"
+              data-testid={ answer === result.correct_answer
+                ? 'correct-answer' : `wrong-answer-${index}` }
+              key={ index }
+            >
+              {answer}
+            </button>))}
         </div>
       </div>
-    ));
+    );
+    });
     return (
       <section>
         Game
         <Header />
         <div>
-          { question }
+          { question[0] }
         </div>
       </section>
     );
