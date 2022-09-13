@@ -113,7 +113,14 @@ class Game extends Component {
   };
 
   render() {
-    const { btnCorrect, btnWrong, isButtonsDisabled, timer, isAnswered, isNextbuttonClicked, currentQuestIndex } = this.state;
+    const {
+      btnCorrect,
+      btnWrong,
+      isButtonsDisabled,
+      timer, isAnswered,
+      isNextbuttonClicked,
+      currentQuestIndex,
+    } = this.state;
     const { results, score } = this.props;
     const question = results.map((result, i) => {
       const arrayAnswers = [...result.incorrect_answers, result.correct_answer];
@@ -148,7 +155,6 @@ class Game extends Component {
     });
     return (
       <section>
-        Game
         <Header />
         <div>
           <p>{ timer }</p>
