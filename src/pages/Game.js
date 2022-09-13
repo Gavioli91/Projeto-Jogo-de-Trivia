@@ -38,9 +38,9 @@ class Game extends Component {
     const num = 0.5;
     const question = results.map((result, i) => {
       const arrayAnswers = [...result.incorrect_answers, result.correct_answer];
-      console.log(arrayAnswers);
+      // console.log(arrayAnswers);
       const randomAnswers = arrayAnswers.sort(() => Math.random() - num);
-      console.log(randomAnswers);
+      // console.log(randomAnswers);
       return results.length === RESULTS_LENGTH
     && (
       <div key={ i }>
