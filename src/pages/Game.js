@@ -20,6 +20,9 @@ class Game extends Component {
     btnWrong: '',
     timer: THIRTY,
     isButtonsDisabled: false,
+    isNextbuttonClicked: false,
+    currentQuestIndex: 0,
+    isAnswered: false,
   };
 
   componentDidMount() {
@@ -28,9 +31,8 @@ class Game extends Component {
       localStorage.removeItem('token');
       history.push('/');
     }
-    this.countdown = setInterval(() => {
-      this.setState((prevState) => ({ timer: prevState.timer - 1 }));
-    }, ONE_SECOND);
+    this.timer();
+    this.setState({ isNextbuttonClicked: true });
   }
 
   componentDidUpdate() {
@@ -40,10 +42,26 @@ class Game extends Component {
       clearInterval(this.countdown);
       const { isButtonsDisabled } = this.state;
       if (isButtonsDisabled === false) {
-        this.setState({ isButtonsDisabled: true });
+        this.setState({
+          isButtonsDisabled: true,
+        });
       }
     }
   }
+
+  timer = () => {
+    this.countdown = setInterval(() => {
+      this.setState((prevState) => ({ timer: prevState.timer - 1,
+        isNextbuttonClicked: false }));
+    }, ONE_SECOND);
+  };
+
+  refreshTimer = () => {
+    clearInterval(this.countdown);
+    this.setState({ timer: THIRTY }, () => {
+      this.timer();
+    });
+  };
 
   changeColor = () => {
     this.setState({
@@ -53,7 +71,7 @@ class Game extends Component {
   };
 
   scoreSum = () => {
-    this.changeColor();
+    this.setAnswered();
     const { dispatch, score, results } = this.props;
     const { timer } = this.state;
     const difficulties = ['easy', 'medium', 'hard'];
@@ -64,12 +82,46 @@ class Game extends Component {
     dispatch(refreshScore(gameScore));
   };
 
+  setAnswered = () => {
+    this.setState({
+      isAnswered: true,
+      isNextbuttonClicked: false,
+    });
+    this.changeColor();
+  };
+
+  nextQuestion = () => {
+    this.setState({
+      isAnswered: false,
+      isNextbuttonClicked: true,
+      btnCorrect: '',
+      btnWrong: '',
+    }, () => {
+      this.setState((prevState) => ({
+        ...prevState,
+        currentQuestIndex: prevState.currentQuestIndex + 1,
+      }));
+    });
+    this.refreshTimer();
+    const { currentQuestIndex } = this.state;
+    const { history } = this.props;
+    const lastIndex = 4;
+    if (currentQuestIndex >= lastIndex) {
+      history.push('/feedback');
+    }
+    clearInterval(this.countdown);
+  };
+
   render() {
-    const { btnCorrect, btnWrong, isButtonsDisabled, timer } = this.state;
+    const { btnCorrect, btnWrong, isButtonsDisabled, timer, isAnswered, isNextbuttonClicked, currentQuestIndex } = this.state;
     const { results, score } = this.props;
     const question = results.map((result, i) => {
       const arrayAnswers = [...result.incorrect_answers, result.correct_answer];
-      const randomAnswers = arrayAnswers.sort(() => Math.random() - NUM);
+      const randomAnswers = isNextbuttonClicked ? (
+        arrayAnswers
+          .sort(() => Math.random() - NUM)) : (
+        arrayAnswers
+      );
       return results.length === RESULTS_LENGTH
     && (
       <div key={ i }>
@@ -86,7 +138,7 @@ class Game extends Component {
               className={ answer === result.correct_answer
                 ? btnCorrect : btnWrong }
               onClick={ answer === result.correct_answer
-                ? this.scoreSum : this.changeColor }
+                ? this.scoreSum : this.setAnswered }
             >
               {answer}
             </button>))}
@@ -100,7 +152,19 @@ class Game extends Component {
         <Header />
         <div>
           <p>{ timer }</p>
-          { question[0] }
+          { question[currentQuestIndex] }
+        </div>
+        <div>
+          { isAnswered && (
+
+            <button
+              data-testid="btn-next"
+              type="button"
+              onClick={ this.nextQuestion }
+            >
+              Next
+            </button>)}
+
         </div>
         <div>
           <span>
