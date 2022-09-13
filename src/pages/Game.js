@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -5,8 +6,15 @@ import Header from '../components/Header';
 
 const ERROR_CODE = 3;
 const RESULTS_LENGTH = 5;
+const CORRECT_ANSWER = 'correct-answer';
+const WRONG_ANSWER = 'wrong-answer';
 
 class Game extends Component {
+  state = {
+    btnCorrect: '',
+    btnWrong: '',
+  };
+
   componentDidMount() {
     console.log('did');
     const { history, code } = this.props;
@@ -17,7 +25,15 @@ class Game extends Component {
     }
   }
 
+  changeColor = () => {
+    this.setState({
+      btnCorrect: 'btnCorrect',
+      btnWrong: 'btnWrong',
+    });
+  };
+
   render() {
+    const { btnCorrect, btnWrong } = this.state;
     const { results } = this.props;
     const num = 0.5;
     const question = results.map((result, i) => {
@@ -35,8 +51,11 @@ class Game extends Component {
             <button
               type="button"
               data-testid={ answer === result.correct_answer
-                ? 'correct-answer' : `wrong-answer-${index}` }
+                ? CORRECT_ANSWER : `${WRONG_ANSWER}-${index}` }
               key={ index }
+              className={ answer === result.correct_answer
+                ? btnCorrect : btnWrong }
+              onClick={ this.changeColor }
             >
               {answer}
             </button>))}
