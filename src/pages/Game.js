@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Header from '../components/Header';
+import { refreshScore } from '../redux/actions';
 
 const ERROR_CODE = 3;
 const RESULTS_LENGTH = 5;
@@ -51,9 +52,21 @@ class Game extends Component {
     });
   };
 
+  scoreSum = () => {
+    this.changeColor();
+    const { dispatch, score, results } = this.props;
+    const { timer } = this.state;
+    const difficulties = ['easy', 'medium', 'hard'];
+    const defaultPoints = 10;
+    const gameScore = defaultPoints + (timer * (difficulties
+      .indexOf(results[0].difficulty) + 1)) + score;
+    console.log(gameScore);
+    dispatch(refreshScore(gameScore));
+  };
+
   render() {
     const { btnCorrect, btnWrong, isButtonsDisabled, timer } = this.state;
-    const { results } = this.props;
+    const { results, score } = this.props;
     const question = results.map((result, i) => {
       const arrayAnswers = [...result.incorrect_answers, result.correct_answer];
       const randomAnswers = arrayAnswers.sort(() => Math.random() - NUM);
@@ -72,7 +85,8 @@ class Game extends Component {
               key={ index }
               className={ answer === result.correct_answer
                 ? btnCorrect : btnWrong }
-              onClick={ this.changeColor }
+              onClick={ answer === result.correct_answer
+                ? this.scoreSum : this.changeColor }
             >
               {answer}
             </button>))}
@@ -88,6 +102,12 @@ class Game extends Component {
           <p>{ timer }</p>
           { question[0] }
         </div>
+        <div>
+          <span>
+            Pontuação:
+            { score }
+          </span>
+        </div>
       </section>
     );
   }
@@ -96,12 +116,15 @@ class Game extends Component {
 Game.propTypes = {
   history: PropTypes.instanceOf(Object).isRequired,
   code: PropTypes.number.isRequired,
+  score: PropTypes.number.isRequired,
+  dispatch: PropTypes.func.isRequired,
   results: PropTypes.instanceOf(Array).isRequired,
 };
 
 const mapStateToProps = (state) => ({
   code: state.questionReducer.code,
   results: state.questionReducer.results,
+  score: state.player.score,
 });
 
 export default connect(mapStateToProps)(Game);

@@ -5,6 +5,7 @@ export const LOADING = 'LOADING';
 export const TOKEN_SUCESS = 'TOKEN_SUCESS';
 export const TOKEN_FAIL = 'TOKEN_FAIL';
 export const QUESTIONS_SUCCESS = 'QUESTIONS_SUCCESS';
+export const REFRESH_SCORE = 'REFRESH_SCORE';
 
 export function logUser(infoUser) {
   return {
@@ -48,3 +49,8 @@ export const fetchTokenAndQuestions = () => async (dispatch) => {
     dispatch(getTokenFail(error));
   }
 };
+
+export const refreshScore = (gameScore) => ({
+  type: REFRESH_SCORE,
+  score: gameScore,
+});

@@ -1,4 +1,4 @@
-import { USER_LOGGED } from '../actions';
+import { USER_LOGGED, REFRESH_SCORE } from '../actions';
 
 const INITIAL_STATE = {
   name: '',
@@ -7,7 +7,7 @@ const INITIAL_STATE = {
   gravatarEmail: '',
 };
 
-function playerReducer(state = INITIAL_STATE, action) {
+function player(state = INITIAL_STATE, action) {
   switch (action.type) {
   case USER_LOGGED:
     return {
@@ -15,9 +15,14 @@ function playerReducer(state = INITIAL_STATE, action) {
       name: action.infoUser.playerName,
       gravatarEmail: action.infoUser.email,
     };
+  case REFRESH_SCORE:
+    return {
+      ...state,
+      score: action.score,
+    };
   default:
     return state;
   }
 }
 
-export default playerReducer;
+export default player;
