@@ -8,20 +8,39 @@ const ERROR_CODE = 3;
 const RESULTS_LENGTH = 5;
 const CORRECT_ANSWER = 'correct-answer';
 const WRONG_ANSWER = 'wrong-answer';
+const ONE_SECOND = 1000;
+const ZERO = 0;
+const THIRTY = 30;
+const NUM = 0.5;
 
 class Game extends Component {
   state = {
     btnCorrect: '',
     btnWrong: '',
+    timer: THIRTY,
+    isButtonsDisabled: false,
   };
 
   componentDidMount() {
-    console.log('did');
     const { history, code } = this.props;
-    console.log(code);
     if (code === ERROR_CODE) {
       localStorage.removeItem('token');
       history.push('/');
+    }
+    this.countdown = setInterval(() => {
+      this.setState((prevState) => ({ timer: prevState.timer - 1 }));
+    }, ONE_SECOND);
+  }
+
+  componentDidUpdate() {
+    const { timer } = this.state;
+    console.log('didUpdate');
+    if (timer === ZERO) {
+      clearInterval(this.countdown);
+      const { isButtonsDisabled } = this.state;
+      if (isButtonsDisabled === false) {
+        this.setState({ isButtonsDisabled: true });
+      }
     }
   }
 
@@ -33,14 +52,11 @@ class Game extends Component {
   };
 
   render() {
-    const { btnCorrect, btnWrong } = this.state;
+    const { btnCorrect, btnWrong, isButtonsDisabled, timer } = this.state;
     const { results } = this.props;
-    const num = 0.5;
     const question = results.map((result, i) => {
       const arrayAnswers = [...result.incorrect_answers, result.correct_answer];
-      // console.log(arrayAnswers);
-      const randomAnswers = arrayAnswers.sort(() => Math.random() - num);
-      // console.log(randomAnswers);
+      const randomAnswers = arrayAnswers.sort(() => Math.random() - NUM);
       return results.length === RESULTS_LENGTH
     && (
       <div key={ i }>
@@ -50,6 +66,7 @@ class Game extends Component {
           {randomAnswers.map((answer, index) => (
             <button
               type="button"
+              disabled={ isButtonsDisabled }
               data-testid={ answer === result.correct_answer
                 ? CORRECT_ANSWER : `${WRONG_ANSWER}-${index}` }
               key={ index }
@@ -68,6 +85,7 @@ class Game extends Component {
         Game
         <Header />
         <div>
+          <p>{ timer }</p>
           { question[0] }
         </div>
       </section>
