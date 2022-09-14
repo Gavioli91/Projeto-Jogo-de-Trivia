@@ -50,7 +50,8 @@ export const fetchTokenAndQuestions = () => async (dispatch) => {
   }
 };
 
-export const refreshScore = (gameScore) => ({
+export const refreshScore = (gameScore, gameAssertions) => ({
   type: REFRESH_SCORE,
   score: gameScore,
+  assertions: gameAssertions,
 });
