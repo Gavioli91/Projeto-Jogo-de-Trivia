@@ -72,20 +72,25 @@ class Game extends Component {
 
   scoreSum = () => {
     this.setAnswered();
-    const { dispatch, score, results } = this.props;
+    const { dispatch, score, results, assertions } = this.props;
     const { timer } = this.state;
     const difficulties = ['easy', 'medium', 'hard'];
     const defaultPoints = 10;
     const gameScore = defaultPoints + (timer * (difficulties
       .indexOf(results[0].difficulty) + 1)) + score;
+    const gameAssertions = assertions + 1;
     console.log(gameScore);
-    dispatch(refreshScore(gameScore));
+    dispatch(refreshScore(gameScore, gameAssertions));
+    this.setState({
+      isButtonsDisabled: true,
+    });
   };
 
   setAnswered = () => {
     this.setState({
       isAnswered: true,
       isNextbuttonClicked: false,
+      isButtonsDisabled: true,
     });
     this.changeColor();
   };
@@ -96,6 +101,7 @@ class Game extends Component {
       isNextbuttonClicked: true,
       btnCorrect: '',
       btnWrong: '',
+      isButtonsDisabled: false,
     }, () => {
       this.setState((prevState) => ({
         ...prevState,
@@ -189,12 +195,14 @@ Game.propTypes = {
   score: PropTypes.number.isRequired,
   dispatch: PropTypes.func.isRequired,
   results: PropTypes.instanceOf(Array).isRequired,
+  assertions: PropTypes.number.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   code: state.questionReducer.code,
   results: state.questionReducer.results,
   score: state.player.score,
+  assertions: state.player.assertions,
 });
 
 export default connect(mapStateToProps)(Game);
